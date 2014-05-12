@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<title>OSLO - Richtlijnen voor Services</title>
+	<meta name="template" content="MultiMarkdown"/>
+</head>
+<body>
+
+<section id='abstract'>
+</section>
+
+<p>Released under the <a href="https://joinup.ec.europa.eu/category/licence/isa-open-metadata-licence-v11">ISA Open Metadata v1.1</a> license.</p>
+
+<p>Please note that remainder of this specification is written in Dutch.</p>
+<section>
+
+<h1 id="inleiding">Inleiding</h1>
+
+<p>Dit document focust op niet-technische overwegingen om een eenduidige beschrijving te definiëren voor services van lokale overheden, die gebruik maken van de OSLO standaard: in het bijzonder, het ruimere kader van een gedeelde productencatalogus en het uitwisselen van contactinformatie. </p>
+
+<p>Het doel van de hier beschreven services is om de verscheidenheid in services die het zelfde doel beogen te minimaliseren.</p>
+
+<p>In het kader van het EWI Open Data project rond contactinformatie is een voorbeeld-implementatie uitgewerkt. Deze wordt hier toegelicht om een duidelijk beeld te geven van hoe een dergelijke service kan geimplementeerd worden in de praktijk.</p>
+
+<p>Data op een vlotte en efficiënte manier kan door gebruik te maken van standaarden. Het project gedeelde dienstencatalogus voor publieke dienstverlening is een gedistribueerde catalogus waarbij informatie uit verschillende lokale authentieke bronnen en centrale bronnen gecombineerd kan worden om de burger, ondernemer en vereniging correcte en begrijpbare informatie te leveren. Deze databronnen bevatten zowel gestructureerde beschrijvingen van de publieke dienstverlening als contactinformatie. Om de informatie uit deze bronnen te kunnen uitwisselen wordt gebruik gemaakt van de OSLO-standaard. </p>
+
+<p>De gedeelde catalogus voor publieke dienstverlening:</p>
+
+<ul>
+<li>is een nieuwe open data bron voor contactinformatie en dienstverlening van de overheid waarvan iedereen gebruik kan maken</li>
+<li>laat burgers en ambtenaren toe om snel doorheen het up-to-date aanbod van verschillende overheden te kunnen zoeken</li>
+<li>kent een optimale gegevensdeling dankzij Open Standaarden #OSLO</li>
+<li>maakt het mogelijk dat via een ‘terugkoppelingskanaal’ gebruikers fouten en afwijkingen kunnen melden</li>
+</ul>
+
+<p>De voorliggende Richtlijnen voor Services beschrijven op het technische vlak de wijze waarop deze data ontsloten of uit gewisseld kunnen worden.
+De beschreven specificaties zijn beproefd en maken het mogelijk voor lokale besturen en hun dienstenleveranciers om services te implementeren in eigen toepassingen. Bij het uitwerken van de service wordt geen voorkeur voor het type webservice naar voren geschoven. Het is zowel mogelijk om uit te wisselen met een restfull webservice als met een Soap webservice.</p>
+
+<p>Op basis van de beschreven services rondom contactinformatie is het mogelijk geworden om ook voor andere services vanuit OSLO op basis van deze richtlijnen te gaan werken.
+Hierdoor ontstaat een eenduidige ontsluiting van persoons-, organisatie-, adres gegevens zoals OSLO dit beoogd.</p>
+</section>
+<section>
+
+<h1 id="uristrategie">URI Strategie</h1>
+
+<p>De belangrijkste motivatie om te kiezen voor een URI-strategie is dat toepassingen en catalogi op een eenduidige manier kunnen verwijzen naar services die bestaan bij de verschillende overheden en gebruikers. Dit zal het hergebruik van de services maximaliseren en de impact bij wijzigingen voor implementaties minimaliseren. Dat kan aangezien alle dergelijke services op dezelfde manier hun resources toegankelijk maken.</p>
+
+<p>Het basispatroon dat deze strategie vervult is (in lijn met http://www.opendataforum.info/Docs/URI_strategie_versie2):</p>
+
+<pre><code>http://{domein}/{type}/{concept}/{referentie}
+</code></pre>
+<section>
+
+<h2 id="domein">Domein</h2>
+
+<p>Het domein bestaat uit het internet-domein en een pad. Het is best zo dat het domein van de URI een referentie bevat naar de bron waar het vandaan komt. </p>
+
+<p>Om het domein herkenbaar te houden voor ontwikkelaars en gebruikers, is het belangrijk om een generiek domein te voorzien in het belang van verschillende diensten die gecentraliseerd zijn rond een bepaald domein of sector.</p>
+
+<p>Bvb. {service}.data.localgov.be/ of data.localgov.be/{service}/ maar dit kan eventueel uitgebreid worden naar {eigendomein}/{eigenpad}/{service} of {service}.{eigendomein}/{eigenpad}.</p>
+</section>
+<section>
+
+<h2 id="type">Type</h2>
+
+<p>Het type duidt op het soort service waarop aanspraak gemaakt wordt en dit heeft impact op hoe de referentie kan gebruikt worden.</p>
+
+<p>Er zijn 2 types die minimaal dienen ondersteund te worden:</p>
+
+<ul>
+<li>id: de referentie verwijst naar een concrete instantie van het concept</li>
+<li>lijst: een referentie is niet nodig, de lijst van concepten of van types concepten (indien geen concept wordt opgegeven) in het domein wordt weergegeven.</li>
+</ul>
+
+<p>Op een lijst kunnen geavanceerdere operaties uitgevoerd worden zoals een custom filter dat kan toegepast worden een bepaald type concept of op het gehele domein of zoeken op tekstwaarde van een bepaald veld in het domein (al dan niet beperkt binnen een bepaald concept). Deze actie wordt meegegeven in de request (bvb. via de url parameters).</p>
+
+<p>Daarnaast zijn er ook nog andere types mogelijk zoals een concretisatie van id (rijksregisternummer &#8220;rrk&#8221; of ondernemingsnummer &#8220;kbo&#8221;.</p>
+</section>
+<section>
+
+<h2 id="concept">Concept</h2>
+
+<p>Het type duidt aan wat voor soort identiteit het gaat waarnaar verwezen wordt met de identifier. In het bijzonder zijn hier de geldige concepten (met Nederlandstalige terminologie):</p>
+
+<ul>
+<li>Basisconcepten
+
+<ul>
+<li>persoon en persoonsrelatie</li>
+<li>organisatie en organisatierelatie</li>
+<li>hoedanigheid</li>
+<li>contactinformatie</li>
+<li>locatie (omvat ook verblijfsobjecten)</li>
+<li>adres</li>
+<li>dienstverlening</li>
+<li>product</li>
+</ul></li>
+<li>Uitgebreide concepten
+
+<ul>
+<li>kanaal</li>
+<li>beleidsveld</li>
+<li>bezigheid</li>
+<li>openingsuren</li>
+</ul></li>
+</ul>
+</section>
+<section>
+
+<h2 id="architectuur">Architectuur</h2>
+
+<p>We passen de URI-strategie toe op contactinformatie van lokale besturen die uitgewisseld wordt beschreven volgens OSLO. In de voorbeelden kiezen we voor een RDF serialisatie en maken we gebruik van The Datatank als publicatie platform voor de services. Er gewerkt met twee basistypes: product en organisatie. De producten komen uit de IPDC en de organisaties uit de VKBO.</p>
+
+<p>Het domein waarop de services gepubliceerd worden is</p>
+
+<p>http://example.com</p>
+
+<p>In de voorbeelden komt dit domein vaak terug. Op dit domein worden de services ondersteunt door The Datatank. The Datatank maakt gebruik van de RDF serialisatie van OSLO resources. Andere implementaties zijn uiteraard ook mogelijk.</p>
+
+<p>In RDF gebeuren al de queries typisch aan de hand van SPARQL., Quasi alle services zullen gebruik maken van SPARQL queries (Virtuoso, ARC, Jena Fuseki e.d.) om de data aan te spreken en via de service te ontsluiten aan de gebruikers.</p>
+
+<p>EasyRDF is een bibliotheek om RDF te consumeren en te produceren. Het dient als controller in de voorbeeldimplementatie van de architectuur. De controller verwerkt en reageert op events, die meestal het gevolg zijn van handelingen van de gebruiker of een software agent en dient als koppeling tussen de representatie in de service en het interne datamodel. </p>
+
+<figure>
+<img src="architectuur2.png" alt="image" id="image" title="Architectuur" style="height:450px;width:600px;" />
+<figcaption>image</figcaption></figure>
+
+<p>Het interne datamodel kan er volledig anders uitzien als de OSLO representatie voor de gebruikers of software agents.</p>
+
+<figure>
+<img src="tabel2.png" alt="image2" id="image2" title="Conceptueel Model overzicht" style="height:250px;width:400px;" />
+<figcaption>image2</figcaption></figure>
+
+<p>Indien er gewerkt wordt met OSLO-XML dan zal elke request verpakt worden in een SOAP envelop die beschreven wordt in de WSDL verbonden met de URI. Het onderliggende model is daar typisch een relationeel datamodel en de vertaling zal in bijna alle gevallen gebeuren naar SQL queries (Microsoft, Oracle, MySQL, PostgreSQL e.d.).</p>
+
+<p>Locaties worden uitgewisseld via de OSLO RDF aan de hand van een referentie naar het bestand met de beschrijving (GML, KML, WKT of andere).</p>
+
+<p><strong>RDF</strong></p>
+
+<hr />
+
+<pre><code>&lt;http://example.com/id/id/organization/28&gt; a &lt;http://purl.org&lt;/oslo/ns/localgov#Organization&gt; ;
+    oslo:authenticLocation &lt;http://example.com/id/location/201&gt; .
+
+&lt;http://example.com/id/id/location/201&gt; locn:geometry &lt;http://example.com/id/geometry/&gt; .
+</code></pre>
+
+<hr />
+
+<p><strong>XML</strong></p>
+
+<hr />
+
+<pre><code>&lt;oorg:organization&gt;
+    &lt;ovc:identifier&gt;
+        &lt;cvb:Identifier&gt;28&lt;/cvb:Identifier&gt;
+    &lt;/ovc:identifier&gt;
+    &lt;oorg:authenticLocation&gt;
+        &lt;ovc:identifier&gt;
+            &lt;cvb:Identifier&gt;201&lt;/cvb:Identifier&gt;
+        &lt;/ovc:identifier&gt;  
+        &lt;cva:Geometry&gt;
+            &lt;!-- geometry description blob --&gt;
+        &lt;/cva:Geomtery&gt;
+    &lt;/oorg:authenticLocation&gt;
+&lt;/organization&gt; 
+</code></pre>
+
+<hr />
+
+<p><strong>Geometrie</strong></p>
+
+<p>Het kenmerk cva:geometry kan elk type van geografische informatie bevatten. De inhoudelijke validatie van dit veld valt buiten de specificatie van OSLO. Hieronder een aantal typevoorbeelden.</p>
+
+<p>Afhankelijk van de encoding van de geometrie, kunnen volgende types gebruikt worden
+Een string (WKT, GML, KML)
+Een klasse (OGC&#8217;s - GeoSPARQL, GEOJSON specification)</p>
+
+<p>We adviseren om onderstaande te gebruiken:</p>
+
+<ul>
+<li>Geometrie
+
+<ul>
+<li>WKT</li>
+<li>GML</li>
+<li>RDF+WKT/GML</li>
+<li>GeoSPARQL and/or GEOJSON specification</li>
+</ul></li>
+<li>Punten
+
+<ul>
+<li>RDF W3C Basic Geo (WGS84 lat/long)</li>
+<li>Of bovenstaande (geometrie)</li>
+</ul></li>
+</ul>
+
+<hr />
+
+<p>RDF+WKT (GeoSPARQL)</p>
+
+<pre><code>:Resource locn:geometry
+    [ a ogc:Point; ogc:asWKT &quot;&lt;http://www.opengis.net/def/crs/OGC/1.3/CRS84&gt; Point(-0.001475 51.477811)&quot;^^ogc:WKTLiteral ] .
+</code></pre>
+
+<p>RDF+GML (GeoSPARQL)</p>
+
+<pre><code>:Resource locn:geometry
+    [ a ogc:Point; ogc:asGML
+        &quot;&lt;gml:Point srsName='http://www.opengis.net/def/crs/OGC/1.3/CRS84'&gt;
+        &lt;gml:coordinates&gt;-0.001475, 51.477811&lt;/gml:coordinates&gt;&lt;/gml:Point&gt;&quot;^^ogc:GMLLiteral ] .
+</code></pre>
+
+<p>RDF (WGS84 lat/long)</p>
+
+<pre><code>:Resource locn:geometry [ a geo:Point; geo:lat &quot;51.477811&quot;; geo:long &quot;-0.001475&quot; ] .
+</code></pre>
+
+<p>RDF (schema.org)</p>
+
+<pre><code>:Resource locn:geometry [ a schema:GeoCoordinates; schema:latitude &quot;51.477811&quot;; schema:longitude &quot;-0.001475&quot; ]  
+</code></pre>
+
+<hr />
+</section>
+</section>
+<section>
+
+<h1 id="resources">Resources</h1>
+
+<p>Om all attributen en relaties van een specifiek concept te krijgen, gekenmerkt aan de hand van zijn identifier gebruiken we volgende uri:</p>
+
+<pre><code>http://{domein}/id/{concept}/{referentie}
+</code></pre>
+
+<p>Het resultaat van deze vraag is een document beschreven volgens OSLO (RDF of OSLO-XML) dat de beoogde instantie van het concept beschrijft, of derefereert.</p>
+
+<p>Voorbeeld:</p>
+
+<p>Het bevragen van een resource, een ‘READ’ operatie, vertaalt zich bij een REST Service naar een GET request.</p>
+
+<pre><code>http://example.com/id/organisatie
+</code></pre>
+
+<p>In de praktijk zal het type ‘id’ vaak expliciet benoemd worden indien het bekend is bijvoorbeeld voor het KBO nummer dat gebruikt wordt als identifier:</p>
+
+<pre><code>http://example.com/kbo/organisatie
+</code></pre>
+
+<p><strong>Vraag</strong></p>
+
+<hr />
+
+<p>Type: </p>
+
+<pre><code>GET 
+</code></pre>
+
+<p>URL Parameters: </p>
+
+<pre><code>id : 28
+</code></pre>
+
+<hr />
+
+<p><strong>Antwoord</strong></p>
+
+<hr />
+
+<p>RDF</p>
+
+<pre><code>@prefix skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;
+@prefix regorg: &lt;http://www.w3.org/ns/regorg#&gt;
+&lt;http://example.com/id/Organization/28&gt; a &lt;http://purl.org/oslo/ns/localgov#Organization&gt; ;
+    skos:notation &quot;28&quot; ;
+regorg:legalName &quot;V-ICT-OR&quot; 
+</code></pre>
+
+<p>XML</p>
+
+<pre><code>&lt;!-- wrapped in XML response body --&gt;
+&lt;oorg:organization&gt;
+    &lt;ovc:identifier&gt;
+        &lt;cvb:Identifier&gt;28&lt;/cvb:Identifier&gt;
+    &lt;/ovc:identifier&gt;
+    &lt;cvb:legalName&gt;V-ICT-OR&lt;/cvb:legalName&gt;
+&lt;/organization&gt;     
+</code></pre>
+
+<hr />
+</section>
+<section>
+
+<h1 id="lijsten">Lijsten</h1>
+
+<p>Om een overzicht te krijgen van alle types concepten die aanwezig zijn in een bepaald domein:</p>
+
+<pre><code>http://{domein}/lijst
+</code></pre>
+
+<p>In lijsten worden alle instanties van een bepaald concept weergegeven.</p>
+
+<pre><code>http://{domein}/lijst/{concept}
+</code></pre>
+
+<p>Optioneel kan er nog een paginanummer en aantal resultaten per pagina weergegeven worden.</p>
+
+<p>Het overzicht van de lijsten gebruiken om te kijken naar wijzigingen van versies.
+Daarvoor zullen er in de resultaten niet alleen concepten, maar ook de versies van de service en de versie van het formaat (bvb. OSLO 1.0 of OSLO 1.1 - in de metadata van het antwoord) worden meegestuurd.</p>
+
+<p>TODO: Overeenkomen + uitleg structuur metadata: in XML en RDF; evenwaardig met statuscode, errorcode, eigen omschrijving als extra veld aan herkomst of identificatie?</p>
+
+<pre><code>http://example.com/lijst/organisatie
+</code></pre>
+
+<p><strong>Vraag</strong></p>
+
+<hr />
+
+<p>Type: </p>
+
+<pre><code>GET
+</code></pre>
+
+<hr />
+
+<p><strong>Antwoord</strong></p>
+
+<hr />
+
+<p>RDF</p>
+
+<pre><code>&lt;http://example.com/id/Organization/1&gt; a &lt;http://purl.org/oslo/ns/localgov#Organization&gt; .
+&lt;http://example.com/id/Organization/10&gt; a &lt;http://purl.org/oslo/ns/localgov#Organization&gt; .
+&lt;http://example.com/id/Organization/11&gt; a &lt;http://purl.org/oslo/ns/localgov#Organization&gt; .
+...
+</code></pre>
+
+<p>XML</p>
+
+<pre><code>&lt;!-- wrapped in XML response body --&gt;
+&lt;organizations&gt;
+    &lt;organization&gt;
+        &lt;ovc:identifier&gt;
+            &lt;cvb:Identifier&gt;1&lt;/cvb:Identifier&gt;
+        &lt;/ovc:identifier&gt;
+    &lt;/organization&gt;
+    &lt;organization&gt;
+        &lt;ovc:identifier&gt;
+            &lt;cvb:Identifier&gt;10&lt;/cvb:Identifier&gt;
+        &lt;/ovc:identifier&gt;
+    &lt;/organization&gt;
+    &lt;organization&gt;
+        &lt;ovc:identifier&gt;
+            &lt;cvb:Identifier&gt;11&lt;/cvb:Identifier&gt;
+        &lt;/ovc:identifier&gt;
+    &lt;/organization&gt;
+    ...
+&lt;/organizations&gt;
+</code></pre>
+
+<hr />
+<section>
+
+<h2 id="registratie">Registratie</h2>
+
+<p>Een lijst kan geregistreerd worden door, afhankelijk van de onderliggende technologie, een template te definië&quot;ren die alle instanties van een bepaald type concept gaat weergeven. </p>
+
+<p>De parameters die meegegeven worden in de request aan het domein om een nieuwe service te registreren zijn technologie-afhankelijk. Dit is in principe geen probleem aangezien het lokaal bestuur zelf verantwoordelijk is voor de registratie van de services die het wil ontsluiten. Er kan hierbij gewerkt worden met een gebruikersinterface of een API.</p>
+
+<p>Onze voorbeeld-implementatie ondersteunt beiden: de creatie van een nieuwe service aan de hand van API of aan de hand van een webformulier.</p>
+
+<pre><code>http://example.com/lijst/organisatie
+</code></pre>
+
+<p><strong>Vraag</strong></p>
+
+<hr />
+
+<p>Type: </p>
+
+<pre><code>POST
+</code></pre>
+
+<p>Content:</p>
+
+<pre><code>{
+    title: &quot;List of organizations&quot;,
+    description: &quot;Uris of organizations in OSLO Consortium.&quot;,
+    date: &quot;2014-02-20&quot;,
+    type: &quot;sparql&quot;,
+    cache_minutes: &quot;5&quot;,
+    draft: &quot;0&quot;,
+    endpoint: &quot;http://example.com/sparql&quot;,
+    query: &quot;CONSTRUCT { ?s a &lt;http://purl.org/oslo/ns/localgov#Organization&gt; } WHERE { ?s a &lt;http://purl.org/oslo/ns/localgov#Organization&gt; }&quot;
+}   
+</code></pre>
+
+<hr />
+</section>
+<section>
+
+<h1 id="navigatie">Navigatie</h1>
+
+<p>Deze lijsten kunnen per concept binnen getrokken worden in een toepassing en het meegegeven paginanummer kan gebruikt worden om efficient te navigeren zonder onnodig een ellenlange lijst te hebben waar de gebruiker sowieso niet in geïnteresseerd is. </p>
+
+<p>De parameters in de request aan de resource zijn daarvoor afhankelijk van de implementatie en erg technologie-afhankelijk.</p>
+
+<p>Het is belangrijk rekening te houden met het risico bij data die veel wordt gewijzigd. Dan is het nodig om tijdens het navigeren te werken met een tijdelijke bijgehouden kopie (cache van de resultaten) in plaats van rechtstreeks op het datamodel.</p>
+
+<pre><code>http://example.com/lijst/organisatie
+</code></pre>
+
+<p><strong>Vraag</strong> </p>
+
+<hr />
+
+<p>Type: </p>
+
+<pre><code>GET
+</code></pre>
+
+<p>URL Parameters:</p>
+
+<pre><code>limit = 5
+offset = 10
+</code></pre>
+
+<hr />
+
+<p><strong>Antwoord</strong></p>
+
+<hr />
+
+<pre><code>Ingekorte lijst (zie ander voorbeeld)
+</code></pre>
+
+<hr />
+</section>
+</section>
+<section>
+
+<h1 id="operatiesopresources">Operaties op Resources</h1>
+
+<p>Het is niet enkel mogelijk om de staat van de aanwezige resource op te vragen (zij het als een lijst van types, lijst van resources, of een specifieke resource zelf). Er is ook interactie met deze resources mogelijk, via de ondersteuning van basis operaties (CRUD) en optioneel geavanceerde operaties zoals filters en zoekoperaties op lijsten van resources.</p>
+
+<p>Deze operaties werken enkel op individuele resources; niet op lijsten.</p>
+
+<pre><code>http://{domein}/id/{concept}/{referentie}
+</code></pre>
+<section>
+
+<h2 id="create">Create</h2>
+
+<p>Bij een create wordt de referentie meegegeven in de content maar is de referentie nog niet aangemaakt dus hoeft deze niet meegegeven te worden.</p>
+
+<pre><code>http://{domein}/id/{concept}
+</code></pre>
+
+<p>Nieuwe resources kunnen aangemaakt worden door op de URI die van toepassing is de nieuwe attributen mee te sturen in OSLO XML of OSLO RDF formaat. Deze zullen echter verpakt moeten worden volgens de onderliggende technologie zodat de service toepassing deze data kan afhandelen en een nieuwe resource kan aanmaken op de gegeven uri. Er kan dus gebruik gemaakt worden van een nieuw referentie en een create operatie op die plaats zorgt voor de introductie van de resource met deze referentie.</p>
+
+<p>Een create is geen goede strategie voor synchronisatie (bulk), daarvoor is een ‘pull’ operatie om alle wijzigingen op te vragen beter geschikt.</p>
+
+<p>Bij een REST Service vertaalt een ‘Create’ operatie zich naar een POST request.</p>
+</section>
+<section>
+
+<h2 id="read">Read</h2>
+
+<p>De read operatie is standaard ondersteund door alle services.</p>
+
+<p>Zie de sectie Resources voor voor meer informatie.</p>
+</section>
+<section>
+
+<h2 id="update">Update</h2>
+
+<p>Aanpassen van een resource, kan op dezelfde manier als create, hier is het enkel nodig om de velden die aangepast worden mee te geven in de request</p>
+
+<p>Bij een REST Service vertaalt een ‘Update’ operatie zich naar een PATCH request.</p>
+</section>
+<section>
+
+<h2 id="destroy">Destroy</h2>
+
+<p>Het verwijderen van een resource gebeurt aan de hand van de URI en door aan te geven dat de interactie de verwijdering van de resource beoogt.</p>
+
+<p>Bij een REST Service vertaalt een ‘Destroy’ operatie zich naar een DELETE request.</p>
+</section>
+</section>
+<section>
+
+<h1 id="operatiesoplijsten">Operaties op Lijsten</h1>
+
+<p>Geavanceerde operaties kunnen in principe zowel aan client-side als aan server-side geimplementeerd worden op basis van de basis operaties op resources en lijsten. In sommige gevallen is het echter interessant om al op voorhand bepaalde lijsten te creeren. De twee meest evident operaties: filteren en zoeken in lijsten kunnen als een service voorzien worden.</p>
+<section>
+
+<h2 id="filters">Filters</h2>
+
+<p>Voor elk customfilter wordt op voorhand bepaalt op welke parameters kan gefilterd worden (welke optioneel zijn en welke niet).</p>
+
+<pre><code>http://{domein}/lijst/{concept}/?match=filterterm
+</code></pre>
+
+<p>of</p>
+
+<pre><code>http://{domein}/lijst?match=filterterm
+</code></pre>
+
+<p>De registratie van een customfilter gebeurt op dezelfde manier als een lijst. De configuratie van de parameters is gelinkt aan de onderliggende implementatie.</p>
+
+<pre><code>http://example.com/lijst/organisatie?legalName=V-ICT-OR
+</code></pre>
+
+<p><strong>Vraag</strong> </p>
+
+<hr />
+
+<p>Type: </p>
+
+<pre><code>GET
+</code></pre>
+
+<p>URI parameters:</p>
+
+<pre><code>legalName : V-ICT-OR
+</code></pre>
+
+<hr />
+
+<p><strong>Antwoord</strong></p>
+
+<hr />
+
+<p>RDF</p>
+
+<pre><code>&lt;http://example.com/id/Organization/28&gt; regorg:legalName &quot;V-ICT-OR&quot; .
+</code></pre>
+
+<p>XML</p>
+
+<pre><code>&lt;!-- wrapped in XML response body --&gt;
+&lt;organizations&gt;
+    &lt;organization&gt;
+        &lt;ovc:identifier&gt;
+            &lt;cvb:Identifier&gt;28&lt;/cvb:Identifier&gt;
+        &lt;/ovc:identifier&gt;   
+        &lt;cvb:legalName&gt;V-ICT-OR&lt;/cvb:legalName&gt;
+    &lt;/organization&gt;
+&lt;/organizations&gt;
+</code></pre>
+
+<hr />
+
+<p>Minimale vereiste filter:</p>
+
+<ul>
+<li>gewijzigd (in een bepaalde periode)</li>
+</ul>
+
+<p>Aanbevolen filter:</p>
+
+<ul>
+<li>exacte match op key (om relaties te kunnen reconstrueren, bvb. het opvragen van hoedanigheden gelinkt aan een bepaald persoon)</li>
+</ul>
+
+<p>Dit is in het bijzonder interessant om bijvoorbeeld de hoedanigheden op te vragen van een bepaalde organisatie.</p>
+
+<pre><code>http://example.com/lijst/hoedanigheid?organization=28
+</code></pre>
+
+<p><strong>Vraag</strong> </p>
+
+<hr />
+
+<p>Type: </p>
+
+<pre><code>GET
+</code></pre>
+
+<p>URI parameters:</p>
+
+<pre><code>organization : 28
+</code></pre>
+
+<hr />
+
+<p><strong>Antwoord</strong></p>
+
+<hr />
+
+<p>RDF</p>
+
+<pre><code>&lt;http://example.com/id/organisatie/28&gt; oslo:hasMembership &lt;http://example.com/id/hoedanigheid/28.1&gt; .
+</code></pre>
+
+<p>XML</p>
+
+<pre><code>&lt;!-- wrapped in XML response body --&gt;
+&lt;memberships&gt;
+    &lt;membership&gt;
+        &lt;ovc:identifier&gt;
+            &lt;cvb:Identifier&gt;28.1&lt;/cvb:Identifier&gt;
+        &lt;/ovc:identifier&gt;   
+    &lt;/membership&gt;
+&lt;/memberships&gt;
+</code></pre>
+
+<hr />
+</section>
+<section>
+
+<h2 id="zoeken">Zoeken</h2>
+
+<p>Voor het zoeken zal er naast een databank, ook nood zijn aan een index. In de index komen dan alle nuttige tekstuele attributen terecht, gelinkt aan hun resource identifier.</p>
+
+<pre><code>http://{domein}/lijst/{concept}?q=zoekterm
+</code></pre>
+
+<p>of</p>
+
+<pre><code>http://{domein}/lijst?q=zoekterm
+</code></pre>
+
+<p>Voor elke zoekservice is het nodig om vooraf te zien welk zoekscenario relevant is en welke velden daarbij nodig zijn, of er gezocht kan worden over alle velden die geconfigureerd zijn heen of enkel in specifieke velden. </p>
+
+<p>Als resultaat volgt er typisch een lijst van identifiers per concept of indien het gaat over een algemene zoekopdracht een lijst van identifiers gekenmerkt met hun types.</p>
+
+<pre><code>http://example.com/lijst/organisatie
+</code></pre>
+
+<p><strong>Vraag</strong></p>
+
+<hr />
+
+<p>Type: </p>
+
+<pre><code>GET
+</code></pre>
+
+<p>URI parameters:</p>
+
+<pre><code>q: V-ICT-OR
+</code></pre>
+
+<hr />
+
+<p><strong>Antwoord</strong></p>
+
+<hr />
+
+<p>RDF</p>
+
+<pre><code>&lt;http://example.com/id/Organization/28&gt; regorg:legalName &quot;V-ICT-OR&quot; .
+</code></pre>
+
+<p>XML</p>
+
+<pre><code>&lt;!-- wrapped in XML response body --&gt;
+&lt;organizations&gt;
+    &lt;organization&gt;
+        &lt;ovc:identifier&gt;
+            &lt;cvb:Identifier&gt;28&lt;/cvb:Identifier&gt;
+        &lt;/ovc:identifier&gt;   
+        &lt;cvb:legalName&gt;V-ICT-OR&lt;/cvb:legalName&gt;
+    &lt;/organization&gt;
+&lt;/organizations&gt;
+</code></pre>
+
+<hr />
+</section>
+</section>
+<section>
+
+<h1 id="identificatieenlogging">Identificatie en Logging</h1>
+
+<p>Naast het exact overnemen van bestaande richtlijnen binnen de organisatie omtrent toegang tot data bij bevragingen en aanpassingen van services bevelen we aan om bij de uitwisseling de volgende informatie mee te geven. We onderscheiden twee situaties: het algemene geval dat alle operaties dekt en het speciale geval waarbij ook gegevens worden aangepast.
+Algemeen</p>
+
+<p>ldentificatie; bijhouden wie wat doet en wanneer (datumstempel):</p>
+
+<pre><code>WANNEER + WIE (partij) + WELKE TOEPASSING 
+</code></pre>
+
+<p>de gegevens voor het loggen worden hiervoor meegeven bij elke vraag. </p>
+
+<p>Dit kan afgesproken worden via gebruiksvoorwaarden die ondertekend dienen te worden alvorens een “AGENT-ID” verleend te krijgen (bvb. een token of een API key of eenvoudigweg de naam van de gebruiker).</p>
+
+<p>Dit is van toepassing op eender welke resource.</p>
+
+<p><strong>Vraag</strong></p>
+
+<hr />
+
+<p>Type: </p>
+
+<pre><code>Eender
+</code></pre>
+
+<p>URI parameters:</p>
+
+<pre><code>Eender
+</code></pre>
+
+<p>Extra parameter:</p>
+
+<pre><code>AGENT-APPLICATION: toepassing
+AGENT-ID: wie
+</code></pre>
+
+<blockquote>
+<p>of</p>
+</blockquote>
+
+<pre><code>ACCES_TOKEN: toeganscode verkregen na authenticatie
+</code></pre>
+
+<hr />
+
+<p>Indien er entiteiten worden gewijzigd dan wordt de datum van laatste wijziging per entiteiten aangepast: in de entiteit Herkomst en Identificatie.</p>
+
+<p>Het is aanbevolen om intern (niet voor de uitwisseling), alle acties op de data bij te houden in een log of een historiek.</p>
+
+<p>We stellen het OAuth 1.0a protocol voor om maximale veiligheid te bekomen, zelfs indien er met niet-versleutelde verbindingen wordt gewerkt.</p>
+
+<figure>
+<img src="OAUTH.png" alt="image3" id="image3" title="OAuth 1.0a typisch scenario" style="height:600px;width:600px;" />
+<figcaption>image3</figcaption></figure>
+</section>
+<section class='appendix'>
+
+<h1 id="acknowledgements">Acknowledgements</h1>
+
+<p>De specificatie is ontwikkeld in een multidiciplinaire werkgroep met 58 mensen uit 28 organisaties en vertegenwoordigers van het ISA programma.</p>
+
+<p>De OSLO standaard is een resultaat van een publiek-private samenwerking , geïnitieerd door V-ICT-OR, de Vlaamse ICT Organisatie. Het project werd gesponsord door Vlaamse ICT dienstenleveranciers (BCT, CEVI, Remmicom en; Schaubroeck) en overheden (CORVE, Digipolis).</p>
+
+<p>Onderzoeksactiviteiten voor het testbed werden gesponsord door het OSLO consortium en het departement Economie, Wetenschap en Innovatie van de Vlaamse Overheid (EWI - Open Data).</p>
+
+<p>Naast deze consortiumpartners nodigde V-ICT-OR ook een aantal experts uit vanuit de overheid: AGIV en AMC (bestuurszaken).</p>
+</section>
+<!--- Info about the scripts below: http://www.w3.org/respec/ref.html -->
+<script src='respec-w3c-common.js'
+        async class='remove'>
+</script>
+<script class='remove'>
+  var respecConfig = {
+      // specification status (e.g. WD, LCWD, WG-NOTE, etc.). If in doubt use ED.
+      specStatus:           "unofficial",
+      
+      // the specification's short name, as in http://www.w3.org/TR/short-name/
+      shortName:            "oslo-service-spec",
+      
+      // licensing
+      additionalCopyrightHolders: "Other Contributors: Ziggy Van Lishout, AGIV, Siegfried.Vanlishout@agiv.be; Joerie Robbrecht, AGIV, Joeri.Robbrecht@agiv.be",
+
+      // if your specification has a subtitle that goes below the main
+      // formal title, define it here
+      // subtitle   :  "an excellent document",
+
+      // if you wish the publication date to be other than the last modification, set this
+      publishDate:  "2014-04-24",
+
+      // if the specification's copyright date is a range of years, specify
+      // the start date here:
+      copyrightStart: "2013",
+
+      // if there is a previously published draft, uncomment this and set its YYYY-MM-DD date
+      // and its maturity status
+      // previousPublishDate:  "1977-03-15",
+      // previousMaturity:  "WD",
+
+      // if there a publicly available Editor's Draft, this is the link
+      // edDraftURI:           "http://berjon.com/",
+
+      // if this is a LCWD, uncomment and set the end of its review period
+      // lcEnd: "2009-08-05",
+
+      // editors, add as many as you like
+      // only "name" is required
+      editors:  [
+          {
+              name:       "Laurens De Vocht"
+          ,   mailto:     "laurens.devocht@ugent.be"
+          ,   company:    "Ghent University - iMinds"
+          ,   companyURL: "http://iminds.be"
+          },
+          {
+              name:       "Raf Buyle"
+          ,   mailto:     "raf.buyle@v-ict-or.be"
+          ,   company:    "V-ICT-OR"
+          ,   companyURL: "http://v-ict-or.be/"
+          },
+                  {
+              name:       "Katrien De Smet"
+          ,   mailto:     "katrien.desmet@bz.vlaanderen.be"
+          ,   company:    "Corve"
+          ,   companyURL: "http://corve.be"
+          },
+          {
+              name:       "Johan Vander Waal"
+          ,   mailto:     "johan.vanderwaal@v-ict-or.be"
+          ,   company:    "V-ICT-OR"
+          ,   companyURL: "http://v-ict-or.be/"
+          }
+      ],
+      
+      // name of the WG
+      // wg:           "OSLO Werkgroep",
+      
+      // URI of the public WG page
+      // wgURI:        "http://example.org/really-cool-wg",
+      
+      // name (without the @w3c.org) of the public mailing to which comments are due
+      // wgPublicList: "spec-writers-anonymous",
+      
+      // URI of the patent status for this WG, for Rec-track documents
+      // !!!! IMPORTANT !!!!
+      // This is important for Rec-track documents, do not copy a patent URI from a random
+      // document unless you know what you're doing. If in doubt ask your friendly neighbourhood
+      // Team Contact.
+      // wgPatentURI:  "",
+      // !!!! IMPORTANT !!!! MAKE THE ABOVE BLINK IN YOUR HEAD
+  };
+</script>
+
+</body>
+</html>
